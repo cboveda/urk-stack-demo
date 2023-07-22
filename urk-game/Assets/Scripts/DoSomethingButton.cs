@@ -3,11 +3,15 @@ using UnityEngine;
 
 public class DoSomethingButton : MonoBehaviour
 {
+    private int _score = 0;
+
     [DllImport("__Internal")]
-    private static extern void Hello();
+    private static extern void SetScore(int score);
 
     public void HandleClick()
     {
-        Hello();
+#if UNITY_WEBGL == true && UNITY_EDITOR == false
+    SetScore (_score++);
+#endif
     }
 }
