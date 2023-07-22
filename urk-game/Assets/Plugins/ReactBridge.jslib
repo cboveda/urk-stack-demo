@@ -10,4 +10,12 @@ mergeInto(LibraryManager.library, {
       console.warn("Failed to dispatch event");
     }
   },
+
+  GameOver: function () {
+    try {
+      window.dispatchReactUnityEvent("GameOver");
+    } catch (e) {
+      console.warn("Failed to dispatch event");
+    }
+  },
 });

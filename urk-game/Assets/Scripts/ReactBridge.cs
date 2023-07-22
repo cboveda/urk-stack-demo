@@ -8,6 +8,6 @@ public class ReactBridge : MonoBehaviour
 
     public void SetTextFromReact(string s)
     {
-        textObject.text = s;
+        textObject.text = "Name:" + s;
     }
 }

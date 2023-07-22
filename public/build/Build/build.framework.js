@@ -1166,29 +1166,29 @@ var tempDouble;
 var tempI64;
 
 var ASM_CONSTS = {
- 2421800: function() {
+ 2421832: function() {
   Module["emscripten_get_now_backup"] = performance.now;
  },
- 2421855: function($0) {
+ 2421887: function($0) {
   performance.now = function() {
    return $0;
   };
  },
- 2421903: function($0) {
+ 2421935: function($0) {
   performance.now = function() {
    return $0;
   };
  },
- 2421951: function() {
+ 2421983: function() {
   performance.now = Module["emscripten_get_now_backup"];
  },
- 2422006: function() {
+ 2422038: function() {
   return Module.webglContextAttributes.premultipliedAlpha;
  },
- 2422067: function() {
+ 2422099: function() {
   return Module.webglContextAttributes.preserveDrawingBuffer;
  },
- 2422131: function() {
+ 2422163: function() {
   return Module.webglContextAttributes.powerPreference;
  }
 };
@@ -1292,8 +1292,12 @@ function stackTrace() {
  return demangleAll(js);
 }
 
-function _Hello() {
- window.alert("Hello, world!");
+function _GameOver() {
+ try {
+  window.dispatchReactUnityEvent("GameOver");
+ } catch (e) {
+  console.warn("Failed to dispatch event");
+ }
 }
 
 var JS_Accelerometer = null;
@@ -2722,6 +2726,14 @@ function _JS_SystemInfo_HasWebGL() {
 
 function _JS_UnityEngineShouldQuit() {
  return !!Module.shouldQuit;
+}
+
+function _SetScore(score) {
+ try {
+  window.dispatchReactUnityEvent("SetScore", score);
+ } catch (e) {
+  console.warn("Failed to dispatch event");
+ }
 }
 
 var ExceptionInfoAttrs = {
@@ -12890,7 +12902,7 @@ function intArrayFromString(stringy, dontAddNull, length) {
 }
 
 var asmLibraryArg = {
- "Hello": _Hello,
+ "GameOver": _GameOver,
  "JS_Accelerometer_IsRunning": _JS_Accelerometer_IsRunning,
  "JS_Accelerometer_Start": _JS_Accelerometer_Start,
  "JS_Accelerometer_Stop": _JS_Accelerometer_Stop,
@@ -12952,6 +12964,7 @@ var asmLibraryArg = {
  "JS_SystemInfo_HasFullscreen": _JS_SystemInfo_HasFullscreen,
  "JS_SystemInfo_HasWebGL": _JS_SystemInfo_HasWebGL,
  "JS_UnityEngineShouldQuit": _JS_UnityEngineShouldQuit,
+ "SetScore": _SetScore,
  "__cxa_allocate_exception": ___cxa_allocate_exception,
  "__cxa_atexit": ___cxa_atexit,
  "__cxa_begin_catch": ___cxa_begin_catch,

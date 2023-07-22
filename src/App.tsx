@@ -1,10 +1,11 @@
 import { Unity, useUnityContext } from "react-unity-webgl";
-import "./App.css";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
 
 function App() {
   const [text, setText] = useState("");
   const [score, setScore] = useState(0);
+  const [leaderBoard, setLeaderBoard] = useState<number[]>([]);
   const textInputRef = useRef<HTMLInputElement>(null);
   const { unityProvider, sendMessage, addEventListener, removeEventListener } =
     useUnityContext({
@@ -14,44 +15,49 @@ function App() {
       codeUrl: "./build/Build/build.wasm",
     });
 
+  const handleSetScore = useCallback((value: ReactUnityEventParameter) => {
+    setScore(value as number);
+  }, []);
+
+  const handleGameOver = useCallback(() => {
+    setLeaderBoard([...leaderBoard, score]);
+    setScore(0);
+  }, [leaderBoard, score]);
+
   useEffect(() => {
-    addEventListener("SetScore", (value) => {
-      setScore(value as number);
-    });
+    addEventListener("SetScore", handleSetScore);
+    addEventListener("GameOver", handleGameOver);
     return () => {
-      removeEventListener("SetScore", (value) => {
-        setScore(value as number);
-      });
+      removeEventListener("SetScore", handleSetScore);
+      removeEventListener("GameOver", handleGameOver);
     };
-  }, [addEventListener, removeEventListener, setScore]);
+  }, [addEventListener, handleGameOver, handleSetScore, removeEventListener]);
 
   return (
-    <>
+    <div className="container">
       <h3>Score! {score}</h3>
       <form
         onSubmit={(event) => {
           event.preventDefault();
           sendMessage("ReactBridge", "SetTextFromReact", text);
         }}
-        style={{ margin: "2em" }}
       >
         <input
           type="text"
           name="text"
+          className="input-text"
           ref={textInputRef}
           onChange={({ target: { value } }) => {
             setText(value);
           }}
           placeholder="Enter text..."
-          style={{ padding: 10 }}
         />
-        <button type="submit">Submit</button>
+        <button type="submit" className="button-submit">
+          Submit
+        </button>
       </form>
-      <Unity
-        unityProvider={unityProvider}
-        style={{ width: 960, height: 600 }}
-      />
-    </>
+      <Unity unityProvider={unityProvider} className="unity-container" />
+    </div>
   );
 }
 
